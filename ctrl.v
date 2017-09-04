@@ -1,8 +1,9 @@
-module controller(clk, rst, Op, rs,Funct,RegDst,ALUSrc,MemToReg,RegWr,MemWr,NPCSel,ExtOp,ALUctr,jump, sb, lb,PCWr, status, irq, EXLClr, EXLSet, cp0Wr);
+module controller(clk, rst, Op, rs,dmAddr,Funct,RegDst,ALUSrc,MemToReg,RegWr,MemWr,NPCSel,ExtOp,ALUctr,jump, sb, lb,PCWr, status, irq, EXLClr, EXLSet, cp0Wr);
 	input [5:0] Op,Funct;
 	input [5:1] rs;
 	input clk, rst;
 	input irq;
+	input dmAddr[31:2];
 	output sb, lb;
 	output reg NPCSel,ALUSrc,RegWr,MemWr, PCWr, EXLClr, EXLSet, cp0Wr;
 	output reg [1:0] RegDst,ALUctr,ExtOp,jump;
@@ -30,9 +31,12 @@ module controller(clk, rst, Op, rs,Funct,RegDst,ALUSrc,MemToReg,RegWr,MemWr,NPCS
 	wire eret=(cp0&&(Funct==6'b011000));
 	wire mfc0=(cp0&&(rs==6'b00000));
 	wire mtc0=(cp0&&(rs==6'b00100));
+
+	wire readBridge=(lw|lb&(dmAddr[31:8]=='h7f));
 	
 	assign sb=(Op==6'b101000);
 	assign lb=(Op==6'b100000);
+
 	
 parameter [3:0]
 	sif=0,
@@ -83,7 +87,7 @@ begin
 	else PCWr=0;
 	if(status == smem || status == sid) RegDst={jal,addu|subu|slt|jalr};
 	if(status == sexe3 || status == sexe1 || status == swb2 || status == swb1) ALUSrc=addi|addiu|lw|sw|lui|ori|sb|lb;
-	if(status == sid || status == swb2) MemToReg=mfc0?(3'b011):{1'b0,jal|jalr,lw|lb};
+	if(status == sid || status == swb2) MemToReg=readBridge?(3'b100):mfc0?(3'b011):{1'b0,jal|jalr,lw|lb};
 	if(status == swb1 || status == swb2) RegWr=addu|subu|slt|addi|addiu|ori|lw|lui|lb|mfc0;
 	else if(status == sid) RegWr=jal|jalr;
 	else RegWr=0;

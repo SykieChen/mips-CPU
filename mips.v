@@ -18,7 +18,7 @@ wire [31:0] loaddata;
 wire [5:0] HWInt;
 wire stat;
 	bitsaver U_BS(busb,sb_data,aluout[1:0],dout,loaddata,sb,lb);
-	controller U_CTRL(clk, rst, Op, rs,Func,RegDst,ALUSrc,MemToReg,RegWr,MemWr,NPCSel,ExtOp,ALUctr,jump,sb,lb,PCWr,stat,irq, EXLClr, EXLSet,cp0Wr);
+	controller U_CTRL(clk, rst, Op, rs,aluout[31:2],Func,RegDst,ALUSrc,MemToReg,RegWr,MemWr,NPCSel,ExtOp,ALUctr,jump,sb,lb,PCWr,stat,irq, EXLClr, EXLSet,cp0Wr);
 	cp0 U_CP0(pc, busb, HWInt, rd, cp0Wr, EXLSet, EXLClr, clk, rst, irq, epc, cp0out);
 	ifu U_IFU(clk,rst,NPCSel,zero,jump,busa,Op,rs,rt,rd,shamt,Func,imm16,jal_reg,PCWr,pc,epc,irq);
 	dm U_DM(clk,aluout[11:2],sb_data,MemWr,dout);
