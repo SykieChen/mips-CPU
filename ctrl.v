@@ -5,7 +5,8 @@ module controller(clk, rst, Op, rs,Funct,RegDst,ALUSrc,MemToReg,RegWr,MemWr,NPCS
 	input irq;
 	output sb, lb;
 	output reg NPCSel,ALUSrc,RegWr,MemWr, PCWr, EXLClr, EXLSet, cp0Wr;
-	output reg [1:0] RegDst,ALUctr,MemToReg,ExtOp,jump;
+	output reg [1:0] RegDst,ALUctr,ExtOp,jump;
+	output reg [2:0] MemToReg;
 	output [2:0] status;
 
 	wire Rtype=(Op==6'b000000);
@@ -82,7 +83,7 @@ begin
 	else PCWr=0;
 	if(status == smem || status == sid) RegDst={jal,addu|subu|slt|jalr};
 	if(status == sexe3 || status == sexe1 || status == swb2 || status == swb1) ALUSrc=addi|addiu|lw|sw|lui|ori|sb|lb;
-	if(status == sid || status == swb2) MemToReg=mfc0?(2'b11):{jal|jalr,lw|lb};
+	if(status == sid || status == swb2) MemToReg=mfc0?(3'b011):{1'b0,jal|jalr,lw|lb};
 	if(status == swb1 || status == swb2) RegWr=addu|subu|slt|addi|addiu|ori|lw|lui|lb|mfc0;
 	else if(status == sid) RegWr=jal|jalr;
 	else RegWr=0;

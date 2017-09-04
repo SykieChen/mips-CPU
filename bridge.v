@@ -1,31 +1,31 @@
-module bridge(rst, HWInt, PrAddr, DIn, DOut, clk, BE, Wen, switch, swirq, ledinput32, led, ledds, tmrADD, tmrWE, tmrDATIn, tmrDATOut, tmrIRQ);
+module bridge(rst, clk,BE, PrAddr, PrRD, PrWD, HWInt,LEDRst, LEDData, LEDWe,TMRRst, TMRAdd, TMRWe, TMRInt, TMRRD, TMRWD, SWTRD, SWTInt);
 input [31:2] PrAddr;
 input [3:0] BE;
-input [31:0] DIn;
-input Wen, rst, clk,swirq,tmrIRQ;
-input [31:0] switch, ledinput32, tmrDATOut;
-output [7:0] ledds;
-output [6:0] led;
-output reg [1:0] tmrADD;
-output tmrWE;
-output [31:0] tmrDATIn;
-output [31:0] DOut;
-output reg [7:2] HWInt;
+input [31:0] PrWD, TMRRD, SWTRD;
+input rst, clk,TMRInt,SWTInt;
+output [3:2] TMRAdd;
+output reg LEDWe, TMRWe;
+output [31:0] LEDData, TMRWD, PrRD;
+output [7:2] HWInt;
+reg HitDEV0;
+reg HitDEV1;
+reg HitDEV2;
 
-//reg [31:0] buffer[4:0];
+assign HitDEV0 = (PrAddr[31:4] == 'h7f0); // Timer
+assign HitDEV1 = (PrAddr[31:4] == 'h7f1); // LED
+assign HitDEV2 = (PrAddr[31:4] == 'h7f2); // Switch
+assign LEDRst = rst;
+assign TMRRst = rst;
+assign TMRAdd = PrAddr[3:2];
+assign LEDData = PrWD;
+assign TMRWD = PrWD;
+assign LEDWe = HitDEV1 & BE[1];
+assign TMRWe = HitDEV0 & BE[0];
+assign PrRD = 	(HitDEV0)?TMRRD:
+				(HitDEV2)?SWTRD:
+				'hffffffff;
+assign HWInt[2] = TMRInt;
+assign HWInt[3] = SWTInt;
 
 //'h1fc0 is the high 30 of 0x0000_7F00
-assign tmrADD = PrAddr - 'h1fc0;
-assign HWInt[2] = tmrIRQ;
-always @(posedge clk or posedge rst) begin
-	if (rst) begin
-		// reset
-		
-	end
-	else begin
-		case(PrAddr - 'h1fc0)
-		0: assign 
-		
-	end
-end
 endmodule

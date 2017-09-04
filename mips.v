@@ -1,6 +1,12 @@
-module mips(clk,rst);
+module mips(rst, clk,BE, PrAddr, PrRD, PrWD, HWInt);
 input clk;
 input rst;
+input [7:2] HWInt;
+input [31:0] PrRD;
+output [3:0] BE;
+output [31:0] PrWD;
+output [31:2] PrAddr;
+
 wire [5:0] Op,Func;
 wire [1:0] RegDst,MemToReg,ExtOp,ALUctr,jump;
 wire NPCSel,ALUSrc,RegWr,MemWr,zero,sb,lb,PCWr,irq, EXLClr, EXLSet, cp0Wr;
