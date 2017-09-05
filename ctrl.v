@@ -3,7 +3,7 @@ module controller(clk, rst, Op, rs,dmAddr,Funct,RegDst,ALUSrc,MemToReg,RegWr,Mem
 	input [5:1] rs;
 	input clk, rst;
 	input irq;
-	input dmAddr[31:2];
+	input [31:2] dmAddr;
 	output sb, lb;
 	output reg NPCSel,ALUSrc,RegWr,MemWr, PCWr, EXLClr, EXLSet, cp0Wr;
 	output reg [1:0] RegDst,ALUctr,ExtOp,jump;

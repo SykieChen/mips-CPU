@@ -1,7 +1,6 @@
-module led(data, led[6:0]);
+module led(data, led);
 input [3:0] data;
-output a,b,c,d,e,f,g;
-reg  a,b,c,d,e,f,g;
+output reg [6:0] led;
 always @(data)
 begin
 case(data)

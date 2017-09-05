@@ -2,14 +2,14 @@ module bridge(rst, clk,BE, PrAddr, PrRD, PrWD, HWInt,LEDRst, LEDData, LEDWe,TMRR
 input [31:2] PrAddr;
 input [3:0] BE;
 input [31:0] PrWD, TMRRD, SWTRD;
-input rst, clk,TMRInt,SWTInt;
+input rst, clk,TMRInt,SWTInt,TMRRst,LEDRst;
 output [3:2] TMRAdd;
-output reg LEDWe, TMRWe;
+output LEDWe, TMRWe;
 output [31:0] LEDData, TMRWD, PrRD;
 output [7:2] HWInt;
-reg HitDEV0;
-reg HitDEV1;
-reg HitDEV2;
+wire HitDEV0;
+wire HitDEV1;
+wire HitDEV2;
 
 assign HitDEV0 = (PrAddr[31:4] == 'h7f0); // Timer
 assign HitDEV1 = (PrAddr[31:4] == 'h7f1); // LED

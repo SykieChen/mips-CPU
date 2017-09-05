@@ -15,8 +15,10 @@ wire [4:0] rs,rt,rd,shamt,rw;
 wire [15:0] imm16;
 wire [31:2] pc, epc;
 wire [31:0] loaddata;
-wire [5:0] HWInt;
 wire stat;
+assign BE = 'b1111;
+assign PrAddr = aluout[31:2];
+assign PrWD = sb_data;
 	bitsaver U_BS(busb,sb_data,aluout[1:0],dout,loaddata,sb,lb);
 	controller U_CTRL(clk, rst, Op, rs,aluout[31:2],Func,RegDst,ALUSrc,MemToReg,RegWr,MemWr,NPCSel,ExtOp,ALUctr,jump,sb,lb,PCWr,stat,irq, EXLClr, EXLSet,cp0Wr);
 	cp0 U_CP0(pc, busb, HWInt, rd, cp0Wr, EXLSet, EXLClr, clk, rst, irq, epc, cp0out);
@@ -27,6 +29,7 @@ wire stat;
 	ext U_EXT(imm16,ExtOp,Extout);
 	mux_reg U_MUX_REG(RegDst,rd,rt,rw);
 	mux_alu U_MUX_ALU(busb,Extout,ALUSrc,mux2_out);
-	mux_MtoR U_MUX_M2R(aluout,dout,jal_reg,cp0out,MemToReg,busw);
+	mux_MtoR U_MUX_M2R(aluout,dout,jal_reg,cp0out,PrRD,MemToReg,busw);
+
 	//data_delayer U_MUX_delayer(busw, slowbusw, clk);
 endmodule
