@@ -9,6 +9,7 @@ mini_machine MACH(clk,rst, led, ds, switch);
 		#0 
 		clk=0;
 		rst=0;
+		switch=0;
 		#30
 		rst=1;
 		#50
