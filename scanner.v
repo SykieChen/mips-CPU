@@ -1,32 +1,28 @@
 module scanner(rst, clock, ds, sel);
-input wire	rst;
-input wire	clock;
-output wire	[7:0] ds;
-output wire	[2:0] sel;
-wire rst_t, rst_o, rst_c;
-assign	rst_c = sel[0] & sel[1] & sel[2];
-assign	rst_o = rst;
-assign	rst_t = ~(rst_c | rst_o);
-\74162 (
-	.ENP(1),
-	.ENT(1),
-	.CLRN(rst_t),
-	.CLK(clock),
-	.QA(sel[0]),
-	.QB(sel[1]),
-	.QC(sel[2])
-);
-\74138 	(
-	.A(sel[0]),
-	.B(sel[1]),
-	.C(sel[2]),
-	.G1(1),
-	.G2AN(0),
-	.G2BN(0),
-	.Y4N(ds[3]),
-	.Y5N(ds[2]),
-	.Y6N(ds[1]),
-	.Y7N(ds[0])
-);
+input rst;
+input clock;
+output reg [7:0] ds;
+output reg [2:0] sel;
+always @(posedge clock or posedge rst) begin
+	if (rst) begin
+		// reset
+		sel = 0;
+		ds = 1;
+	end
+	else begin
+		if (sel == 8) sel <=0;
+		else sel <= sel + 1;
+		case(sel)
+			0:ds = 8'b00000001;
+			1:ds = 8'b00000010;
+			2:ds = 8'b00000100;
+			3:ds = 8'b00001000;
+			4:ds = 8'b00010000;
+			5:ds = 8'b00100000;
+			6:ds = 8'b01000000;
+			7:ds = 8'b10000000;
+		endcase
+	end
+end
 
 endmodule

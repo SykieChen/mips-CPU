@@ -8,14 +8,15 @@ output [31:0] PrWD;
 output [31:2] PrAddr;
 
 wire [5:0] Op,Func;
-wire [1:0] RegDst,MemToReg,ExtOp,ALUctr,jump;
+wire [1:0] RegDst,ExtOp,ALUctr,jump;
+wire [2:0] MemToReg;
 wire NPCSel,ALUSrc,RegWr,MemWr,zero,sb,lb,PCWr,irq, EXLClr, EXLSet, cp0Wr;
 wire [31:0] busa,busb,busw,slowbusw,dout,aluout,Extout,mux2_out,jal_reg, sb_data,cp0out;
 wire [4:0] rs,rt,rd,shamt,rw;
 wire [15:0] imm16;
 wire [31:2] pc, epc;
 wire [31:0] loaddata;
-wire stat;
+wire [2:0] stat;
 assign BE = 'b1111;
 assign PrAddr = aluout[31:2];
 assign PrWD = sb_data;
