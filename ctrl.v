@@ -8,7 +8,7 @@ module controller(clk, rst, Op, rs,dmAddr,Funct,RegDst,ALUSrc,MemToReg,RegWr,Mem
 	output reg NPCSel,ALUSrc,RegWr,MemWr, PCWr, EXLClr, EXLSet, cp0Wr;
 	output reg [1:0] RegDst,ALUctr,ExtOp,jump;
 	output reg [2:0] MemToReg;
-	output [2:0] status;
+	output [3:0] status;
 
 	wire Rtype=(Op==6'b000000);
 	wire addu=(Rtype&&(Funct==6'b100001));
@@ -49,7 +49,7 @@ parameter [3:0]
 	swb2=7,
 	sint=8;
 
-reg [2:0] status, nexts;
+reg [3:0] status, nexts;
 
 
 always@(posedge clk or posedge rst)
@@ -86,27 +86,27 @@ begin
 	if(status == sif || (status == sint && irq == 1)) PCWr=1;
 	else PCWr=0;
 	if(status == smem || status == sid) RegDst={jal,addu|subu|slt|jalr};
-	if(status == sexe3 || status == sexe1 || status == swb2 || status == swb1) ALUSrc=addi|addiu|lw|sw|lui|ori|sb|lb;
+	if(status == sexe3 || status == sexe2 || status == sexe1 || status == swb2 || status == swb1) ALUSrc=addi|addiu|lw|sw|lui|ori|sb|lb;
 	if(status == sid || status == swb2) MemToReg=readBridge?(3'b100):mfc0?(3'b011):{1'b0,jal|jalr,lw|lb};
 	if(status == swb1 || status == swb2) RegWr=addu|subu|slt|addi|addiu|ori|lw|lui|lb|mfc0;
 	else if(status == sid) RegWr=jal|jalr;
 	else RegWr=0;
 	if(status == smem) MemWr=sw|sb;
 	else MemWr=0;
-	if(status == smem) cp0Wr=mtc0;
+	if(status == sid) cp0Wr=mtc0;
 	else cp0Wr=0;
 	if(status == sif) assign NPCSel=beq;
 	if(status == sid ) begin
 		if (eret) begin
-			assign jump=2'b11; //eret
+			jump=2'b11; //eret
 			EXLClr = 1;
 		end
 		else begin
-			assign jump={jr|jalr,j|jal};
+			jump={jr|jalr,j|jal};
 			EXLClr = 0;
 		end
 	end
-	else assign jump=0;
+	// else jump=0;
 	if(status == sexe1 || status == sexe2 || status == sexe3 || status == smem) ExtOp={lui,addi|addiu|lw|sw|beq|sb|lb};
 	if(status == sexe1 || status == sexe2 || status == sexe3) ALUctr={ori|slt,subu|slt|beq};
 	if(status == sint && irq == 1) EXLSet = 1;

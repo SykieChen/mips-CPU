@@ -14,8 +14,10 @@ mini_machine MACH(clk,rst, led, ds, switch);
 		rst=1;
 		#50
 		rst=0;
-		#1000
-		switch=233;
+		#4000
+		switch=1;
+		#8000
+		switch=2;
 	end
 	always #20 clk=~clk;
 endmodule
